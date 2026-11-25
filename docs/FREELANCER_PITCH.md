@@ -1,13 +1,19 @@
 # Freelancer pitch kit
 
-Use this after the public URL and GitHub repo exist. Fill in `[LIVE_DEMO_URL]`,
-`[GITHUB_URL]` and `[NAME]`.
+The public URL and GitHub repo are live. Fill in `[NAME]` only.
+
+- **Live demo:** https://pizzeria-artusi.onrender.com
+- **Code:** https://github.com/JeremyE7/pizzeria-artusi-booking-mvp
+
+The Render free instance can take 30–60 seconds on the first request after
+inactivity. Open it once before sending the message so it is warm.
 
 ## One-liner
 
 > I built a working restaurant booking assistant with Python async, PostgreSQL,
 > an LLM-ready parser, a Telegram adapter and a kitchen comanda panel. Here is
-> the live demo: [LIVE_DEMO_URL] · code: [GITHUB_URL]
+> the live demo: https://pizzeria-artusi.onrender.com · code:
+> https://github.com/JeremyE7/pizzeria-artusi-booking-mvp
 
 ## English message for the Freelancer project thread
 
@@ -16,8 +22,8 @@ Hi [NAME],
 I built a working reference implementation of the booking assistant described
 in your project, not just a mockup:
 
-**Live demo:** [LIVE_DEMO_URL]
-**Code:** [GITHUB_URL]
+**Live demo:** https://pizzeria-artusi.onrender.com
+**Code:** https://github.com/JeremyE7/pizzeria-artusi-booking-mvp
 
 It covers the core slice:
 
@@ -48,8 +54,8 @@ Hola [NOMBRE]:
 Armé una implementación funcional del asistente de reservas que describís, no
 solo un mockup:
 
-**Demo:** [LIVE_DEMO_URL]
-**Código:** [GITHUB_URL]
+**Demo:** https://pizzeria-artusi.onrender.com
+**Código:** https://github.com/JeremyE7/pizzeria-artusi-booking-mvp
 
 Incluye:
 
@@ -60,7 +66,7 @@ Incluye:
 - Confirmación idempotente: si se reintenta, devuelve la misma comanda.
 - Adapter de Telegram con aiogram listo para conectar un token.
 - Panel de cocina con las reservas como comandas.
-- 19 tests automáticos y Docker + PostgreSQL.
+- 20 tests automáticos y Docker + PostgreSQL.
 
 La demo funciona con LLM y Telegram simulados; pasar a OpenRouter o a un bot
 real es configuración más el adapter que ya está. WhatsApp/voz todavía no está
@@ -76,7 +82,8 @@ Jeremy
 
 > Working reference implementation, not a mockup: Python async + PostgreSQL,
 > LLM-ready parser, Telegram adapter, idempotent bookings, kitchen panel,
-> 19 tests. Live demo: [LIVE_DEMO_URL] · code: [GITHUB_URL]
+> 20 tests. Live demo: https://pizzeria-artusi.onrender.com · code:
+> https://github.com/JeremyE7/pizzeria-artusi-booking-mvp
 
 ## How to update the Freelancer bid
 

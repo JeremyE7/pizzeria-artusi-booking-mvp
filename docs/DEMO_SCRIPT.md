@@ -39,7 +39,7 @@ show a **working flow**, not to read the README.
    “Every confirmed booking becomes a comanda on the kitchen rail.”
 
 7. **0:55 — Show the engineering**
-   “FastAPI, async SQLAlchemy, PostgreSQL, 19 tests, Docker. The LLM and
+   “FastAPI, async SQLAlchemy, PostgreSQL, 20 tests, Docker. The LLM and
    Telegram adapters are ready; the demo uses deterministic mocks so it runs
    without keys.”
 

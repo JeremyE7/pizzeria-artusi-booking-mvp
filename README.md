@@ -1,5 +1,9 @@
 # Pizzería Artusi — Restaurant Booking MVP
 
+**Live demo:** [pizzeria-artusi.onrender.com](https://pizzeria-artusi.onrender.com)
+
+**Code:** [github.com/JeremyE7/pizzeria-artusi-booking-mvp](https://github.com/JeremyE7/pizzeria-artusi-booking-mvp)
+
 A working vertical slice of a **classic pizzeria game** with a real booking
 engine: chat in Spanish, Italian or English → availability check → table
 assignment → idempotent confirmation → kitchen ticket rail.
@@ -176,20 +180,26 @@ The suite covers:
 
 Current result: **20 passed**.
 
-## Public demo
+## Live demo
 
-A client-facing demo needs a public HTTPS URL, not a Tailscale address. The
-repo includes a Render Blueprint (`render.yaml`), a Docker image and a deploy
-checklist:
+- **App:** <https://pizzeria-artusi.onrender.com>
+- **Kitchen:** <https://pizzeria-artusi.onrender.com/admin> (Basic Auth; the
+  credentials are shared privately with the client)
+- **API docs:** <https://pizzeria-artusi.onrender.com/docs>
+
+The demo runs on Render's free tier, so the first request after inactivity can
+take **30–60 seconds**. Subsequent requests are fast.
+
+The repo includes a Render Blueprint (`render.yaml`), a Docker image and a
+deploy checklist:
 
 - [DEPLOY.md](DEPLOY.md) — Render / Railway / Fly steps.
 - [docs/FREELANCER_PITCH.md](docs/FREELANCER_PITCH.md) — ready-to-paste messages
   for Freelancer and Workana.
 - [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) — 60-second Loom script.
 
-For a public deploy, set `DEMO_BASIC_AUTH=demo:<long-password>`. That protects
-`/admin`, `/api/bookings` and `/api/reminders`; the chat stays public. The
-public URL should use HTTPS.
+`DEMO_BASIC_AUTH=demo:<long-password>` protects `/admin`, `/api/bookings` and
+`/api/reminders`; the chat stays public.
 
 ## Mocked vs real
 
