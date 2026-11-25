@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: pizzeria-artusi
+    runtime: docker
+    plan: free
+    autoDeploy: true
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: pizzeria-artusi-db
+          property: connectionString
+      - key: TIMEZONE
+        value: Europe/Rome
+      - key: LLM_PROVIDER
+        value: mock
+      - key: DEMO_BASIC_AUTH
+        sync: false
+
+databases:
+  - name: pizzeria-artusi-db
+    plan: free
+    databaseName: artusi
+    user: artusi

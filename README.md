@@ -171,9 +171,25 @@ The suite covers:
 - idempotent repeat bookings and joined admin data;
 - Italian, English and Spanish intent parsing;
 - full chat flows, one-field-at-a-time replies and duplicate confirmations;
-- HTTP pages, `/chat`, `/api/bookings`, `/api/availability` and cancellation.
+- HTTP pages, `/chat`, `/api/bookings`, `/api/availability` and cancellation;
+- optional Basic Auth on `/admin` and the booking API.
 
-Current result: **19 passed**.
+Current result: **20 passed**.
+
+## Public demo
+
+A client-facing demo needs a public HTTPS URL, not a Tailscale address. The
+repo includes a Render Blueprint (`render.yaml`), a Docker image and a deploy
+checklist:
+
+- [DEPLOY.md](DEPLOY.md) — Render / Railway / Fly steps.
+- [docs/FREELANCER_PITCH.md](docs/FREELANCER_PITCH.md) — ready-to-paste messages
+  for Freelancer and Workana.
+- [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) — 60-second Loom script.
+
+For a public deploy, set `DEMO_BASIC_AUTH=demo:<long-password>`. That protects
+`/admin`, `/api/bookings` and `/api/reminders`; the chat stays public. The
+public URL should use HTTPS.
 
 ## Mocked vs real
 
@@ -252,7 +268,8 @@ responsive layout that keeps the table and comandas usable on mobile.
 
 This is an MVP, not a production deployment. Before exposing it to real guests:
 
-- Add authentication to `/admin` and the write endpoints.
+- Add authentication to `/admin` and the write endpoints. The demo already
+  supports optional Basic Auth via `DEMO_BASIC_AUTH`.
 - Replace `Base.metadata.create_all` with Alembic migrations.
 - Add a PostgreSQL exclusion constraint (or serializable transaction /
   `SELECT ... FOR UPDATE`) for the table-overlap check under concurrency.

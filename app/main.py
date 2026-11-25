@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+import base64
+import secrets
 from contextlib import asynccontextmanager
 from datetime import date, datetime, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from fastapi import Depends, FastAPI, Form, HTTPException, Query, Request
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -53,6 +55,35 @@ def create_app(engine_=engine, session_factory=SessionLocal) -> FastAPI:
         StaticFiles(directory=str(BASE_DIR / "app" / "static")),
         name="static",
     )
+
+    @app.middleware("http")
+    async def protect_private_demo_paths(request: Request, call_next):
+        """Keep the kitchen and booking API private on a public demo."""
+        expected = settings.demo_basic_auth
+        protected = (
+            request.url.path.startswith("/admin")
+            or request.url.path.startswith("/api/bookings")
+            or request.url.path.startswith("/api/reminders")
+        )
+        if not expected or not protected:
+            return await call_next(request)
+
+        header = request.headers.get("authorization", "")
+        supplied = ""
+        if header.lower().startswith("basic "):
+            try:
+                supplied = base64.b64decode(header[6:]).decode("utf-8")
+            except Exception:
+                supplied = ""
+        if supplied and secrets.compare_digest(supplied, expected):
+            return await call_next(request)
+
+        return Response(
+            "Acceso restringido. Pide las credenciales de la demo.",
+            status_code=401,
+            headers={"WWW-Authenticate": 'Basic realm="Pizzería Artusi demo"'},
+            media_type="text/plain",
+        )
 
     async def get_session(request: Request):
         async with request.app.state.session_factory() as session:

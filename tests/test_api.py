@@ -127,3 +127,19 @@ async def test_reminders_endpoint(client):
     response = await client.get("/api/reminders/due")
     assert response.status_code == 200
     assert isinstance(response.json(), list)
+
+
+@pytest.mark.asyncio
+async def test_admin_and_booking_api_can_be_password_protected(client, monkeypatch):
+    from app.config import settings
+
+    monkeypatch.setattr(settings, "demo_basic_auth", "demo:secret")
+
+    assert (await client.get("/")).status_code == 200
+    assert (await client.get("/health")).status_code == 200
+    assert (await client.get("/admin")).status_code == 401
+    assert (await client.get("/api/bookings")).status_code == 401
+
+    authorized = await client.get("/admin", auth=("demo", "secret"))
+    assert authorized.status_code == 200
+    assert "Comandas" in authorized.text
