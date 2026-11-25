@@ -14,7 +14,7 @@ async def seed_demo_data(session: AsyncSession) -> Restaurant:
         return existing
 
     artusi = Restaurant(
-        name="Artusi Ħabibot",
+        name="Pizzería Artusi",
         timezone="Europe/Rome",
         opening_time=time(12, 0),
         closing_time=time(23, 0),
@@ -30,7 +30,7 @@ async def seed_demo_data(session: AsyncSession) -> Restaurant:
     ]
 
     demo = Restaurant(
-        name="Trattoria Demo",
+        name="Pizzería Demo",
         timezone="Europe/Rome",
         opening_time=time(12, 0),
         closing_time=time(22, 30),

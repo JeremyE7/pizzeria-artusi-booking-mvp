@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 180" role="img" aria-label="Pizza margarita">
+  <g stroke="#2b1a12" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+    <circle cx="120" cy="92" r="70" fill="#df9f3b"/>
+    <circle cx="120" cy="92" r="57" fill="#f8d04a"/>
+    <circle cx="92" cy="72" r="12" fill="#d9412c"/>
+    <circle cx="151" cy="80" r="11" fill="#d9412c"/>
+    <circle cx="115" cy="112" r="10" fill="#d9412c"/>
+    <circle cx="82" cy="115" r="9" fill="#d9412c"/>
+    <circle cx="153" cy="118" r="9" fill="#d9412c"/>
+    <path d="M91 96 Q103 84 117 96 Q105 106 91 96" fill="#3e7d3a" stroke-width="3"/>
+    <path d="M139 103 Q150 94 162 104 Q151 113 139 103" fill="#3e7d3a" stroke-width="3"/>
+  </g>
+</svg>

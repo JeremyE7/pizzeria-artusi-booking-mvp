@@ -7,6 +7,7 @@ from zoneinfo import ZoneInfo
 
 from fastapi import Depends, FastAPI, Form, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -40,13 +41,18 @@ def create_app(engine_=engine, session_factory=SessionLocal) -> FastAPI:
         yield
 
     app = FastAPI(
-        title="Artusi Ħabibot — Booking MVP",
-        description="Asistente de reservas para restaurantes: chat, disponibilidad e idempotencia.",
+        title="Pizzería Artusi — Reservas por chat",
+        description="Pizzería de videojuego con reservas reales: chat, disponibilidad e idempotencia.",
         version="0.1.0",
         lifespan=lifespan,
     )
     app.state.session_factory = session_factory
     app.state.parser = build_parser()
+    app.mount(
+        "/static",
+        StaticFiles(directory=str(BASE_DIR / "app" / "static")),
+        name="static",
+    )
 
     async def get_session(request: Request):
         async with request.app.state.session_factory() as session:

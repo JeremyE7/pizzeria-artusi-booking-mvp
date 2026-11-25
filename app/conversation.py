@@ -152,7 +152,7 @@ def detect_language(text: str) -> str:
     for lang, words in LANG_HINTS.items():
         scores[lang] = sum(1 for word in words if re.search(rf"\b{re.escape(word)}\b", low))
     best = max(scores, key=scores.get)
-    return best if scores[best] > 0 else "it"
+    return best if scores[best] > 0 else "es"
 
 
 def _clean_words(text: str) -> str:

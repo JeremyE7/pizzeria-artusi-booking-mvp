@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" role="img" aria-label="Horno de leña encendido">
+  <g stroke="#2b1a12" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+    <rect x="24" y="207" width="252" height="22" rx="7" fill="#7b4a2c"/>
+
+    <path d="M45 207 Q45 70 150 70 Q255 70 255 207 Z" fill="#b85c3e"/>
+    <clipPath id="dome">
+      <path d="M45 207 Q45 70 150 70 Q255 70 255 207 Z"/>
+    </clipPath>
+    <g clip-path="url(#dome)" stroke="#8e3f2d" stroke-width="2" opacity=".6">
+      <path d="M40 95 H260 M40 120 H260 M40 145 H260 M40 170 H260 M40 195 H260"/>
+      <path d="M70 70 V207 M100 70 V207 M130 70 V207 M160 70 V207 M190 70 V207 M220 70 V207"/>
+    </g>
+    <path d="M45 207 Q45 70 150 70 Q255 70 255 207 Z" fill="none"/>
+
+    <rect x="181" y="24" width="38" height="50" fill="#a64d35"/>
+    <rect x="170" y="17" width="60" height="15" rx="4" fill="#7b4a2c"/>
+
+    <path d="M92 207 Q92 128 150 128 Q208 128 208 207 Z" fill="#2a1712"/>
+    <clipPath id="mouth">
+      <path d="M92 207 Q92 128 150 128 Q208 128 208 207 Z"/>
+    </clipPath>
+    <g clip-path="url(#mouth)">
+      <path d="M100 212 Q105 166 130 148 Q133 181 151 157 Q166 185 181 159 Q197 180 202 212 Z" fill="#f28b30"/>
+      <path d="M123 212 Q129 181 145 171 Q151 191 161 181 Q174 193 177 212 Z" fill="#f6c445"/>
+    </g>
+
+    <path d="M50 207 H250" fill="none" stroke-width="4" opacity=".35"/>
+  </g>
+
+  <g fill="#e9ddc9" opacity=".72">
+    <circle cx="193" cy="7" r="9"/>
+    <circle cx="205" cy="-5" r="6"/>
+    <circle cx="182" cy="-3" r="5"/>
+  </g>
+</svg>

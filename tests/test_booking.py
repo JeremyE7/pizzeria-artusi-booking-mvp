@@ -120,5 +120,5 @@ async def test_admin_listing_includes_join_data(session):
 
     bookings = await service.list_bookings(day=DAY)
     listed = next(item for item in bookings if item.id == booking.id)
-    assert listed.restaurant.name == "Artusi Ħabibot"
+    assert listed.restaurant.name == "Pizzería Artusi"
     assert listed.table.name == slot.table_name

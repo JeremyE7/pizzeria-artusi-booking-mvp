@@ -115,9 +115,9 @@ class MockIntentParser:
         customer_name = self._name(message)
         restaurant_name = None
         if "artusi" in low or "ħabibot" in low:
-            restaurant_name = "Artusi Ħabibot"
-        elif "trattoria demo" in low:
-            restaurant_name = "Trattoria Demo"
+            restaurant_name = "Pizzería Artusi"
+        elif "pizzería demo" in low or "pizzeria demo" in low:
+            restaurant_name = "Pizzería Demo"
 
         if action == "unknown" and any((party_size, requested_date, requested_time)):
             action = "book"

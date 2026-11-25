@@ -20,7 +20,7 @@ async def test_health_and_pages(client):
 
     admin = await client.get("/admin")
     assert admin.status_code == 200
-    assert "Quaderno di sala" in admin.text
+    assert "Comandas" in admin.text
 
 
 @pytest.mark.asyncio

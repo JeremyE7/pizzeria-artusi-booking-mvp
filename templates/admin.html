@@ -1,42 +1,42 @@
 {% extends "base.html" %}
 
-{% block title %}Quaderno di sala · Artusi Ħabibot{% endblock %}
+{% block title %}Cocina · Comandas · Pizzería Artusi{% endblock %}
 
 {% block content %}
-<section class="admin-hero">
+<section class="admin-head">
   <div>
-    <div class="kicker">Quaderno di sala</div>
-    <h1>Prenotazioni, <em>in ordine.</em></h1>
+    <span class="eyebrow">Cocina · turno de hoy</span>
+    <h1>Comandas de la <em>cocina.</em></h1>
     <p>
-      Ogni conversazione confermata finisce qui: data, ospite, tavolo e codice.
-      Il codice è la chiave idempotente che protegge la prenotazione dai doppi invii.
+      Cada reserva confirmada cuelga del riel. El código es la llave de la
+      comanda: protege la mesa de los dobles envíos y de las confusiones.
     </p>
   </div>
   <div class="admin-actions">
-    <a class="btn-primary" href="/#demo">Apri la chat <span>↗</span></a>
-    <a class="link-quiet" href="/docs">API →</a>
+    <a class="btn-3d alt" href="/#mesa">Volver al salón <span>↗</span></a>
+    <a class="link-chalk" href="/docs">API →</a>
   </div>
 </section>
 
-<section class="stats" aria-label="Resumen de reservas">
-  <div class="stat">
-    <div class="stat-label">Prenotazioni</div>
-    <div class="stat-value">{{ rows|length }}</div>
-    <div class="stat-note">confermate{% if selected_day %} · {{ selected_day }}{% endif %}</div>
+<section class="kitchen-board" aria-label="Resumen de comandas">
+  <div class="kitchen-stat">
+    <div class="kitchen-label">Comandas</div>
+    <div class="kitchen-value">{{ rows|length }}</div>
+    <div class="kitchen-note">confirmadas{% if selected_day %} · {{ selected_day }}{% endif %}</div>
   </div>
-  <div class="stat">
-    <div class="stat-label">Coperti</div>
-    <div class="stat-value">{{ covers }}</div>
-    <div class="stat-note">persone prenotate</div>
+  <div class="kitchen-stat">
+    <div class="kitchen-label">Comensales</div>
+    <div class="kitchen-value">{{ covers }}</div>
+    <div class="kitchen-note">personas en sala</div>
   </div>
-  <div class="stat">
-    <div class="stat-label">Prossime</div>
-    <div class="stat-value">{{ future_count }}</div>
-    <div class="stat-note">
+  <div class="kitchen-stat">
+    <div class="kitchen-label">Próximas</div>
+    <div class="kitchen-value">{{ future_count }}</div>
+    <div class="kitchen-note">
       {% if next_row %}
         {{ next_row.date }} · {{ next_row.time }} · {{ next_row.customer }}
       {% else %}
-        nessuna in arrivo
+        sin reservas en camino
       {% endif %}
     </div>
   </div>
@@ -44,66 +44,53 @@
 
 <div class="admin-toolbar">
   <h2 class="section-title">
-    {% if selected_day %}Prenotazioni del {{ selected_day }}{% else %}Tutte le prenotazioni{% endif %}
+    {% if selected_day %}Comandas del {{ selected_day }}{% else %}Riel de comandas{% endif %}
   </h2>
-  <form class="filter-form" method="get" action="/admin">
+  <form class="filter-card" method="get" action="/admin">
     <label>
-      <span class="filter-label">Filtra per giorno</span>
+      <span class="filter-label">Filtrar por día</span>
       <input class="date-input" type="date" name="day" value="{{ selected_day }}">
     </label>
-    <button class="btn-small" type="submit">Filtra</button>
-    {% if selected_day %}<a class="btn-small" href="/admin">Tutte</a>{% endif %}
+    <button class="btn-3d" type="submit" style="padding:8px 12px; font-size:.78rem;">Filtrar</button>
+    {% if selected_day %}
+      <a class="link-chalk" href="/admin">Todas</a>
+    {% endif %}
   </form>
 </div>
 
 {% if rows %}
-<div class="ledger-wrap">
-  <table class="ledger">
-    <thead>
-      <tr>
-        <th>Quando</th>
-        <th>Ospite</th>
-        <th>Pax</th>
-        <th>Tavolo</th>
-        <th>Codice</th>
-        <th>Stato</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for row in rows %}
-      <tr>
-        <td class="when">
-          <strong>{{ row.date }}</strong>
-          <span>{{ row.time }} · {{ row.restaurant }}</span>
-        </td>
-        <td class="guest">{{ row.customer }}</td>
-        <td>{{ row.party }}</td>
-        <td>{{ row.table }}</td>
-        <td class="code" title="{{ row.id }}">{{ row.short_id }}</td>
-        <td>
-          <span class="status-tag {% if not row.is_future %}is-past{% endif %}">
-            {% if row.is_future %}Confermata{% else %}Passata{% endif %}
-          </span>
-        </td>
-        <td>
-          <form method="post" action="/admin/bookings/{{ row.id }}/cancel" onsubmit="return confirm('Annullare questa prenotazione?');">
-            <input type="hidden" name="day" value="{{ selected_day }}">
-            <button class="btn-small" type="submit">Annulla</button>
-          </form>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<div class="ticket-rail">
+  <div class="tickets">
+    {% for row in rows %}
+    <article class="comanda">
+      <span class="comanda-stamp {% if not row.is_future %}is-past{% endif %}">
+        {% if row.is_future %}CONFIRMADA{% else %}PASADA{% endif %}
+      </span>
+      <div class="comanda-head">
+        <span>COMANDA</span>
+        <span class="comanda-table">MESA {{ row.table }}</span>
+      </div>
+      <div class="comanda-name">{{ row.customer }}</div>
+      <div class="comanda-time">{{ row.date }} · {{ row.time }}</div>
+      <div class="comanda-row"><span>Personas</span><strong>{{ row.party }}</strong></div>
+      <div class="comanda-row"><span>Pizzería</span><strong>{{ row.restaurant }}</strong></div>
+      <div class="comanda-code">Código: {{ row.short_id }}<br>{{ row.id }}</div>
+      <form method="post" action="/admin/bookings/{{ row.id }}/cancel" onsubmit="return confirm('¿Cancelar esta comanda?');">
+        <input type="hidden" name="day" value="{{ selected_day }}">
+        <button class="comanda-cancel" type="submit">Cancelar comanda</button>
+      </form>
+    </article>
+    {% endfor %}
+  </div>
 </div>
 {% else %}
 <div class="empty">
-  <h2>Nessuna prenotazione, per ora.</h2>
-  <p>Apri la chat e chiedi un tavolo: la prenotazione apparirà qui.</p>
-  <a class="btn-primary" href="/#demo">Apri la chat <span>↓</span></a>
+  <img src="/static/pizza.svg" alt="">
+  <h2>No hay comandas todavía.</h2>
+  <p>El riel está vacío. Pide una mesa en el salón y la comanda aparecerá aquí.</p>
+  <a class="btn-3d" href="/#mesa">Ir al salón <span>↓</span></a>
 </div>
 {% endif %}
 
-<p class="admin-note">Demo · dati in tempo reale · nessuna autenticazione in questa build.</p>
+<p class="admin-note">Demo · datos en vivo · esta cocina todavía no tiene contraseña.</p>
 {% endblock %}

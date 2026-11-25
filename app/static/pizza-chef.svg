@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 230" role="img" aria-label="Pizza chef Artusi">
+  <g stroke="#2b1a12" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+    <circle cx="110" cy="146" r="62" fill="#df9f3b"/>
+    <circle cx="110" cy="146" r="51" fill="#f8d04a"/>
+
+    <circle cx="84" cy="128" r="10" fill="#d9412c"/>
+    <circle cx="137" cy="132" r="9" fill="#d9412c"/>
+    <circle cx="106" cy="111" r="7" fill="#d9412c"/>
+    <circle cx="91" cy="166" r="7" fill="#d9412c"/>
+    <circle cx="132" cy="163" r="8" fill="#d9412c"/>
+
+    <circle cx="94" cy="143" r="4.5" fill="#2b1a12" stroke="none"/>
+    <circle cx="126" cy="143" r="4.5" fill="#2b1a12" stroke="none"/>
+    <path d="M96 157 Q110 169 124 157" fill="none" stroke-width="5"/>
+    <circle cx="77" cy="156" r="6" fill="#ef7a5a" stroke="none" opacity=".7"/>
+    <circle cx="143" cy="156" r="6" fill="#ef7a5a" stroke="none" opacity=".7"/>
+
+    <path d="M104 96 Q110 84 118 96 Q112 100 104 96" fill="#3e7d3a" stroke-width="3"/>
+
+    <circle cx="74" cy="53" r="22" fill="#fffaf0"/>
+    <circle cx="110" cy="39" r="28" fill="#fffaf0"/>
+    <circle cx="147" cy="54" r="21" fill="#fffaf0"/>
+    <rect x="70" y="69" width="80" height="25" rx="7" fill="#fffaf0"/>
+    <path d="M79 82 H141" fill="none" stroke-width="3" opacity=".35"/>
+  </g>
+</svg>

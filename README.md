@@ -1,31 +1,35 @@
-# Artusi Ħabibot — Restaurant Booking MVP
+# Pizzería Artusi — Restaurant Booking MVP
 
-A working vertical slice of a multilingual restaurant booking concierge:
-chat in Italian, English or Spanish → availability check → table assignment →
-idempotent confirmation → booking ledger.
+A working vertical slice of a **classic pizzeria game** with a real booking
+engine: chat in Spanish, Italian or English → availability check → table
+assignment → idempotent confirmation → kitchen ticket rail.
 
-Built with **Python, FastAPI, async SQLAlchemy, PostgreSQL** (SQLite for the
-zero-setup demo), **Jinja2** and a small vanilla-JS chat client. The LLM is
-mocked by a deterministic parser so the demo runs without keys; an OpenRouter
-adapter is ready for the real model.
+The UI is a little pizzeria: checkered tablecloth, chalkboard menu, wood-fired
+oven, pizza-chef mascot and hanging comandas. Behind it are **Python, FastAPI,
+async SQLAlchemy, PostgreSQL** (SQLite for the zero-setup demo), **Jinja2** and
+a small vanilla-JS chat client. The LLM is mocked by a deterministic parser so
+the demo runs without keys; an OpenRouter adapter is ready for the real model.
 
-![Artusi Ħabibot — home](docs/home.png)
+![Pizzería Artusi — home](docs/home.png)
 
-![Chat demo](docs/chat-demo.png)
+![Chat demo with receipt](docs/chat-demo.png)
 
-![Admin ledger](docs/admin-demo.png)
+![Kitchen comandas](docs/admin-demo.png)
 
 ## What it demonstrates
 
-- **Multilingual chat** — understands `domani alle 20:30`, `tomorrow at 8pm`
-  and `mañana a las 20:30`, then asks only for the missing fields.
+- **Multilingual chat** — understands `mañana a las 20:30`,
+  `domani alle 20:30` and `tomorrow at 8pm`, then asks only for the missing
+  fields. The UI is Spanish by default; the bot mirrors the guest's language.
 - **Real availability engine** — 30-minute slots, 90-minute bookings,
   capacity-aware table assignment, lunch/dinner service window.
 - **No double bookings** — overlapping bookings on the same table are rejected.
 - **Idempotent confirmations** — retrying the same confirmation returns the
   same receipt instead of creating a second booking.
-- **Booking ledger** — server-rendered admin page with date filter, covers,
-  upcoming count and cancellation.
+- **Kitchen ticket rail** — server-rendered admin page with date filter,
+  covers, upcoming count and cancellation, styled as hanging comandas.
+- **Pizzeria game UI** — checkered tablecloth, chalkboard menu, brick oven,
+  pizza-chef mascot and a receipt with a confirmation stamp.
 - **Tests** — domain, parser, conversation flows and HTTP API are covered.
 - **Docker + PostgreSQL** — one command to run the production-like stack.
 
@@ -41,8 +45,9 @@ uv pip install --python .venv/bin/python -r requirements-dev.txt
 .venv/bin/python -m app.demo
 ```
 
-The script runs a complete Italian conversation in memory and prints the
-receipt and the booking ledger.
+The script runs a complete Spanish conversation in memory and prints the
+comanda and the kitchen ledger. Italian and English flows are covered by the
+test suite and also work through the web chat.
 
 ### Option B — web demo with SQLite
 
@@ -51,7 +56,7 @@ DATABASE_URL='sqlite+aiosqlite:///./demo.db' \
   .venv/bin/uvicorn app.main:app --reload
 ```
 
-Open <http://127.0.0.1:8000>. The admin ledger is at
+Open <http://127.0.0.1:8000>. The kitchen comandas are at
 <http://127.0.0.1:8000/admin>, and the API docs are at
 <http://127.0.0.1:8000/docs>. Delete `demo.db` to reset the demo.
 
@@ -142,7 +147,7 @@ field at a time. The parser also understands a full sentence in one message.
 | `GET` | `/api/bookings?day=YYYY-MM-DD` | Confirmed bookings, optionally filtered by day |
 | `POST` | `/api/bookings/{id}/cancel` | Cancel a booking |
 | `GET` | `/api/reminders/due` | Bookings in the 23–25 hour reminder window |
-| `GET` | `/admin` | Server-rendered booking ledger |
+| `GET` | `/admin` | Kitchen comandas (server-rendered ticket rail) |
 | `GET` | `/health` | Health check |
 | `GET` | `/docs` | OpenAPI docs |
 
@@ -151,7 +156,7 @@ Example:
 ```bash
 curl -s http://127.0.0.1:8000/chat \
   -H 'Content-Type: application/json' \
-  -d '{"session_id":"demo","message":"Vorrei un tavolo per 4 persone domani alle 20:30"}'
+  -d '{"session_id":"demo","message":"Una mesa para 4 personas mañana a las 20:30"}'
 ```
 
 ## Tests
@@ -217,25 +222,31 @@ app/
   telegram_bot.py     optional aiogram adapter
   reminders.py        mock reminder runner
   seed.py             demo restaurant and tables
+  static/             pizza chef, pizza and wood-oven artwork
 templates/
-  base.html           editorial design system
-  chat.html           chat demo
-  admin.html          booking ledger
+  base.html           pizzeria game design system
+  chat.html           table-side chat + receipt
+  admin.html          kitchen comanda rail
 tests/                pytest suite
 docs/                 screenshots
 ```
 
 ## Design notes
 
-The interface follows a **“quaderno di sala”** direction rather than a generic
-SaaS dashboard: warm paper, ink and tomato, 1px rules, a receipt-like booking
-card, and an editorial type pairing (Fraunces, Manrope, IBM Plex Mono). There
-are no purple gradients, no glassmorphism, no floating AI sparkles and no
-decorative icon soup. The page has one primary action: try the chat.
+The interface follows a **classic pizzeria game** direction: a red-and-cream
+checkered tablecloth, a chalkboard menu, a brick wood-fired oven, hanging
+comandas, a pizza-chef mascot and chunky game buttons. The type pairing is
+Lilita One + Baloo 2 + Courier Prime + Patrick Hand. There are no purple
+gradients, no glassmorphism, no floating AI sparkles and no empty SaaS cards.
+
+The page is laid out like a restaurant scene rather than a marketing page: the
+chat lives on “Mesa 04”, the menu and oven sit beside it, and the admin view is
+the kitchen ticket rail. The UI is Spanish; the bot replies in Spanish, Italian
+or English depending on what the guest writes.
 
 Accessibility details: semantic landmarks, a labelled chat input, `aria-live`
 for bot replies, visible focus states, `prefers-reduced-motion` support, and a
-responsive layout that keeps the chat usable on mobile.
+responsive layout that keeps the table and comandas usable on mobile.
 
 ## Production checklist
 
