@@ -12,9 +12,9 @@ the demo runs without keys; an OpenRouter adapter is ready for the real model.
 
 ![Pizzería Artusi — home](docs/home.png)
 
-![Chat demo with receipt](docs/chat-demo.png)
+![60-second booking demo](docs/demo.gif)
 
-![Kitchen comandas](docs/admin-demo.png)
+[Download the MP4 demo](docs/demo.mp4) · [Chat with receipt](docs/chat-demo.png) · [Kitchen comandas](docs/admin-demo.png)
 
 ## What it demonstrates
 
