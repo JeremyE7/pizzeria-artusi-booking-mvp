@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+
+{% block title %}Artusi Ħabibot · Prenota un tavolo in chat{% endblock %}
+
+{% block content %}
+<section class="hero" aria-labelledby="hero-title">
+  <div>
+    <div class="kicker">Concierge di sala · demo funzionante</div>
+    <h1 id="hero-title">Un tavolo, <em>senza telefonate.</em></h1>
+    <p class="lede">
+      Artusi Ħabibot capisce italiano, inglese e spagnolo, trova il tavolo giusto
+      e conferma con un codice. Tutto dentro una conversazione.
+    </p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="#demo">Prova la chat <span>↓</span></a>
+      <a class="link-quiet" href="/admin">Vedi il quaderno di sala →</a>
+    </div>
+  </div>
+
+  <aside class="hero-note" aria-label="Dettagli del servizio">
+    <div class="note-label">Servizio di oggi</div>
+    <div class="service-row"><span>Pranzo</span><span>12:00 — 15:00</span></div>
+    <div class="service-row"><span>Cena</span><span>19:00 — 23:00</span></div>
+    <div class="service-row"><span>Tavoli</span><span>2 — 8 persone</span></div>
+    <div class="service-row"><span>Conferma</span><span>immediata, con codice</span></div>
+    <p class="hero-quote">
+      “La sala è un luogo, non un form.”
+      <footer>Nota di progetto · MVP</footer>
+    </p>
+  </aside>
+</section>
+
+<section class="demo-grid" id="demo" aria-label="Demo del concierge">
+  <aside class="rail">
+    <div class="rail-section">
+      <div class="rail-label">Prova a scrivere</div>
+      <button class="sample" type="button" data-prompt="Vorrei un tavolo per 4 persone domani alle 20:30">
+        <span class="lang">Italiano</span>
+        Vorrei un tavolo per 4 persone domani alle 20:30
+      </button>
+      <button class="sample" type="button" data-prompt="Book a table for two tomorrow at 8pm">
+        <span class="lang">English</span>
+        Book a table for two tomorrow at 8pm
+      </button>
+      <button class="sample" type="button" data-prompt="Reservar una mesa para 4 mañana a las 20:30">
+        <span class="lang">Español</span>
+        Reservar una mesa para 4 mañana a las 20:30
+      </button>
+      <button class="sample" type="button" data-prompt="Per stasera alle 21, a nome di Mario">
+        <span class="lang">Italiano</span>
+        Per stasera alle 21, a nome di Mario
+      </button>
+    </div>
+
+    <div class="rail-section">
+      <div class="rail-label">Cosa è reale</div>
+      <ul class="real-list">
+        <li>Disponibilità su PostgreSQL</li>
+        <li>Conferma idempotente</li>
+        <li>Doppia prenotazione bloccata</li>
+        <li>Parser multilingue deterministico</li>
+      </ul>
+      <p style="margin-top: 14px;">
+        L’LLM è simulato in questa build. L’adapter per OpenRouter è pronto:
+        basta una chiave per passare al modello real.
+      </p>
+    </div>
+
+    <div class="rail-section">
+      <div class="rail-label">Sotto il cofano</div>
+      <p>
+        FastAPI · SQLAlchemy async · PostgreSQL · pytest.
+        <a class="link-quiet" href="/docs" style="display:inline-block; margin-top:10px;">Apri la API →</a>
+      </p>
+    </div>
+  </aside>
+
+  <div class="chat-card" aria-label="Chat con il concierge">
+    <header class="chat-head">
+      <div>
+        <h2 class="chat-title">Sala · chat demo</h2>
+        <div class="chat-sub">Risponde in IT · EN · ES · dati demo</div>
+      </div>
+      <span class="chat-badge">Live</span>
+    </header>
+
+    <div class="chat-log" id="chat-log" role="log" aria-live="polite" aria-label="Messaggi della conversazione">
+      <div class="msg msg-bot">
+        <div class="msg-meta">Artusi · concierge</div>
+        <div class="bubble">Buonasera. Sono il concierge di Artusi. Posso prenotare un tavolo per te: dimmi per quante persone, che giorno e a che ora.</div>
+      </div>
+    </div>
+
+    <form class="chat-form" id="chat-form">
+      <label for="chat-input" class="mono" style="position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0);">Scrivi un messaggio</label>
+      <input
+        class="chat-input"
+        id="chat-input"
+        name="message"
+        type="text"
+        placeholder="Scrivi come parleresti al ristorante…"
+        autocomplete="off"
+        maxlength="1000"
+        required
+      >
+      <button class="send-btn" type="submit" id="send-btn">Invia</button>
+    </form>
+    <div class="chat-foot">
+      <span>Enter per inviare</span>
+      <span>Demo · nessun dato reale</span>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (() => {
+    const TZ = "{{ timezone }}";
+    const log = document.getElementById("chat-log");
+    const form = document.getElementById("chat-form");
+    const input = document.getElementById("chat-input");
+    const sendBtn = document.getElementById("send-btn");
+    const samples = document.querySelectorAll("[data-prompt]");
+    let busy = false;
+
+    const sessionKey = "artusi.session";
+    let sessionId = localStorage.getItem(sessionKey);
+    if (!sessionId) {
+      sessionId = (window.crypto && crypto.randomUUID)
+        ? crypto.randomUUID()
+        : "sess-" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+      localStorage.setItem(sessionKey, sessionId);
+    }
+
+    function timeLabel() {
+      return new Intl.DateTimeFormat("it-IT", {
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: TZ
+      }).format(new Date());
+    }
+
+    function scrollToEnd() {
+      log.scrollTo({ top: log.scrollHeight, behavior: "smooth" });
+    }
+
+    function addMessage(role, text) {
+      const wrap = document.createElement("div");
+      wrap.className = "msg " + (role === "user" ? "msg-user" : "msg-bot");
+
+      const meta = document.createElement("div");
+      meta.className = "msg-meta";
+      meta.textContent = (role === "user" ? "Tu" : "Artusi") + " · " + timeLabel();
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = text;
+
+      wrap.appendChild(meta);
+      wrap.appendChild(bubble);
+      log.appendChild(wrap);
+      scrollToEnd();
+      return wrap;
+    }
+
+    function addTyping() {
+      const wrap = document.createElement("div");
+      wrap.className = "msg msg-bot";
+
+      const meta = document.createElement("div");
+      meta.className = "msg-meta";
+      meta.textContent = "Artusi sta scrivendo";
+
+      const bubble = document.createElement("div");
+      bubble.className = "typing";
+      for (let i = 0; i < 3; i += 1) bubble.appendChild(document.createElement("span"));
+
+      wrap.appendChild(meta);
+      wrap.appendChild(bubble);
+      log.appendChild(wrap);
+      scrollToEnd();
+      return wrap;
+    }
+
+    function formatBookingDate(iso) {
+      const date = new Date(iso);
+      const day = new Intl.DateTimeFormat("it-IT", {
+        day: "2-digit", month: "2-digit", year: "numeric", timeZone: TZ
+      }).format(date);
+      const time = new Intl.DateTimeFormat("it-IT", {
+        hour: "2-digit", minute: "2-digit", timeZone: TZ
+      }).format(date);
+      return day + " · " + time;
+    }
+
+    function addReceipt(booking) {
+      const receipt = document.createElement("div");
+      receipt.className = "receipt";
+
+      const rows = [
+        ["Codice", booking.id.slice(0, 8).toUpperCase()],
+        ["Ristorante", booking.restaurant],
+        ["Tavolo", booking.table],
+        ["Ospite", booking.customer_name],
+        ["Persone", String(booking.party_size)],
+        ["Quando", formatBookingDate(booking.start_at)]
+      ];
+
+      rows.forEach(([label, value]) => {
+        const row = document.createElement("div");
+        row.className = "receipt-row";
+        const key = document.createElement("span");
+        key.textContent = label;
+        const val = document.createElement("strong");
+        val.textContent = value;
+        row.appendChild(key);
+        row.appendChild(val);
+        receipt.appendChild(row);
+      });
+
+      const link = document.createElement("a");
+      link.className = "receipt-link";
+      link.href = "/admin";
+      link.textContent = "Apri il quaderno di sala →";
+      receipt.appendChild(link);
+
+      log.lastElementChild.appendChild(receipt);
+      scrollToEnd();
+    }
+
+    function setBusy(value) {
+      busy = value;
+      sendBtn.disabled = value;
+      input.setAttribute("aria-busy", value ? "true" : "false");
+    }
+
+    async function sendMessage(text) {
+      const clean = text.trim();
+      if (!clean || busy) return;
+
+      addMessage("user", clean);
+      input.value = "";
+      setBusy(true);
+
+      const typing = addTyping();
+
+      try {
+        const response = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ session_id: sessionId, message: clean })
+        });
+
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        const data = await response.json();
+        typing.remove();
+        addMessage("bot", data.reply);
+        if (data.booking) addReceipt(data.booking);
+      } catch (error) {
+        typing.remove();
+        addMessage("bot", "Non riesco a raggiungere la sala. Riprova tra poco.");
+      } finally {
+        setBusy(false);
+        input.focus();
+      }
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      sendMessage(input.value);
+    });
+
+    samples.forEach((button) => {
+      button.addEventListener("click", () => {
+        sendMessage(button.dataset.prompt || "");
+      });
+    });
+  })();
+</script>
+{% endblock %}

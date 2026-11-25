@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Quaderno di sala · Artusi Ħabibot{% endblock %}
+
+{% block content %}
+<section class="admin-hero">
+  <div>
+    <div class="kicker">Quaderno di sala</div>
+    <h1>Prenotazioni, <em>in ordine.</em></h1>
+    <p>
+      Ogni conversazione confermata finisce qui: data, ospite, tavolo e codice.
+      Il codice è la chiave idempotente che protegge la prenotazione dai doppi invii.
+    </p>
+  </div>
+  <div class="admin-actions">
+    <a class="btn-primary" href="/#demo">Apri la chat <span>↗</span></a>
+    <a class="link-quiet" href="/docs">API →</a>
+  </div>
+</section>
+
+<section class="stats" aria-label="Resumen de reservas">
+  <div class="stat">
+    <div class="stat-label">Prenotazioni</div>
+    <div class="stat-value">{{ rows|length }}</div>
+    <div class="stat-note">confermate{% if selected_day %} · {{ selected_day }}{% endif %}</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Coperti</div>
+    <div class="stat-value">{{ covers }}</div>
+    <div class="stat-note">persone prenotate</div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">Prossime</div>
+    <div class="stat-value">{{ future_count }}</div>
+    <div class="stat-note">
+      {% if next_row %}
+        {{ next_row.date }} · {{ next_row.time }} · {{ next_row.customer }}
+      {% else %}
+        nessuna in arrivo
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<div class="admin-toolbar">
+  <h2 class="section-title">
+    {% if selected_day %}Prenotazioni del {{ selected_day }}{% else %}Tutte le prenotazioni{% endif %}
+  </h2>
+  <form class="filter-form" method="get" action="/admin">
+    <label>
+      <span class="filter-label">Filtra per giorno</span>
+      <input class="date-input" type="date" name="day" value="{{ selected_day }}">
+    </label>
+    <button class="btn-small" type="submit">Filtra</button>
+    {% if selected_day %}<a class="btn-small" href="/admin">Tutte</a>{% endif %}
+  </form>
+</div>
+
+{% if rows %}
+<div class="ledger-wrap">
+  <table class="ledger">
+    <thead>
+      <tr>
+        <th>Quando</th>
+        <th>Ospite</th>
+        <th>Pax</th>
+        <th>Tavolo</th>
+        <th>Codice</th>
+        <th>Stato</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in rows %}
+      <tr>
+        <td class="when">
+          <strong>{{ row.date }}</strong>
+          <span>{{ row.time }} · {{ row.restaurant }}</span>
+        </td>
+        <td class="guest">{{ row.customer }}</td>
+        <td>{{ row.party }}</td>
+        <td>{{ row.table }}</td>
+        <td class="code" title="{{ row.id }}">{{ row.short_id }}</td>
+        <td>
+          <span class="status-tag {% if not row.is_future %}is-past{% endif %}">
+            {% if row.is_future %}Confermata{% else %}Passata{% endif %}
+          </span>
+        </td>
+        <td>
+          <form method="post" action="/admin/bookings/{{ row.id }}/cancel" onsubmit="return confirm('Annullare questa prenotazione?');">
+            <input type="hidden" name="day" value="{{ selected_day }}">
+            <button class="btn-small" type="submit">Annulla</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty">
+  <h2>Nessuna prenotazione, per ora.</h2>
+  <p>Apri la chat e chiedi un tavolo: la prenotazione apparirà qui.</p>
+  <a class="btn-primary" href="/#demo">Apri la chat <span>↓</span></a>
+</div>
+{% endif %}
+
+<p class="admin-note">Demo · dati in tempo reale · nessuna autenticazione in questa build.</p>
+{% endblock %}
