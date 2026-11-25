@@ -23,6 +23,7 @@ services:
       DATABASE_URL: postgresql+psycopg://postgres:postgres@db:5432/artusi
       TIMEZONE: Europe/Rome
       LLM_PROVIDER: mock
+      DEMO_BASIC_AUTH: ${DEMO_BASIC_AUTH:-}
     ports:
       - "8000:8000"
     depends_on:
